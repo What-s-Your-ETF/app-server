@@ -5,15 +5,15 @@ function preprocessStockPrice(data) {
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i];
         const fields = line.split(',"');
-        let number = parseInt(fields[5].substring(0, fields[5].length - 2).replace(/,/g, ''));
+        let volume = parseFloat(fields[5].substring(0, fields[5].length - 2).replace(/,/g, ''));
         result.push({
             date: new Date(fields[0].substring(1, fields[0].length - 1).replace(/ /g, '')),
             endPrice: parseInt(fields[1].substring(0, fields[1].length - 1).replace(/,/g, '')),
             startPrice: parseInt(fields[2].substring(0, fields[2].length - 1).replace(/,/g, '')),
             highPrice: parseInt(fields[3].substring(0, fields[3].length - 1).replace(/,/g, '')),
             lowPrice: parseInt(fields[4].substring(0, fields[4].length - 1).replace(/,/g, '')),
-            volume: !isNaN(number) ?  number : null,
-            volatility: parseInt(fields[6].substring(0, fields[6].length - 2).replace(/,/g, '')),
+            volume: !isNaN(volume) ?  volume : null,
+            volatility: parseFloat(fields[6].substring(0, fields[6].length - 2).replace(/,/g, '')),
         });
     }
     return result;

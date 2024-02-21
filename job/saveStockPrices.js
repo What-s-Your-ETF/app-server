@@ -28,6 +28,8 @@ const files = fileReader.readDir();
         }
         await StockPrice.insertMany(prices)
             .then((stockPrices) => {
-            }).catch((err) => console.error(err));
+            }).catch((err) => {
+                console.error(err);
+            });
     }
 })();
