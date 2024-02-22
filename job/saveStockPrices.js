@@ -12,7 +12,7 @@ mongoose.connect(MONGO_HOST, {
     w: 'majority',
 });
 
-const baseUrl = "/Users/jinhyeon/KJH/dev/wy-etf/data/kospi200";
+const baseUrl = "/Users/jinhyeon/KJH/dev/wy-portfolio/data/kospi200";
 const fileReader = new FileReader(baseUrl);
 const files = fileReader.readDir();
 (async () => {
