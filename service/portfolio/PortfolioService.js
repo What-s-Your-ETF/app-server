@@ -37,9 +37,11 @@ async function getInvestResult(duration, investAmounts, itemCodes, weights) {
 /**
  * 각 종목의 수익률을 계산하는 함수
  * @param stockItems
+ * @param startDate
+ * @param endDate
  * @returns {Promise<*[][]>}
  */
-async function calculateEachRates(stockItems) {
+async function calculateEachRates(stockItems, startDate, endDate) {
     const rates = [[], [], []];
     return Promise.all(
         stockItems.map((stockItem, index) =>
