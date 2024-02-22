@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 let User = require('../model/User.js');
-const tokenClass = require('../utils/auth.js');
+const tokenClass = require('../sevices/auth/auth.js');
 const auth = require('../sevices/auth/auth.js');
 
 router.post("/signup", async(req, res, next)=>{
