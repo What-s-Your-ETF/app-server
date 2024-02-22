@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const newsCrawling = require('../news/naverNewsTest.js');
+const newsCrawling = require('../sevices/news/naverNewsTest.js');
 
 router.post("/getnews", async(req, res, next)=>{
     try{

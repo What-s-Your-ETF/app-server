@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 let User = require('../model/User.js');
 const tokenClass = require('../utils/auth.js');
-const auth = require('../utils/auth.js')
+const auth = require('../sevices/auth/auth.js');
 
 router.post("/signup", async(req, res, next)=>{
     try{
@@ -78,7 +78,7 @@ router.post("/verifyToken", async (req, res, next) => {
     try {
         const token  = req.cookies['authToken'];
 
-        // 헤더로 토큰에 할당 추가하기.
+        // 헤더로 토큰에 할당 추가하기. 아직안함
 
         // 사용자의 비밀번호를 암호화하여 토큰과 비교
         const ValidToken = auth.verifyToken(token);
