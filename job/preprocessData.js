@@ -47,7 +47,7 @@ function preprocessStockItem(data) {
     return result;
 }
 
-// const fileReader = new FileReader("/Users/jinhyeon/KJH/dev/wy-etf/data/kospi200/000080test.csv");
+// const fileReader = new FileReader("/Users/jinhyeon/KJH/dev/wy-portfolio/data/kospi200/000080test.csv");
 // const data = fileReader.read();
 
 module.exports = {preprocessStockItem, preprocessStockPrice};

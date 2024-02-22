@@ -15,4 +15,8 @@ const stockItemSchema = new mongoose.Schema({
     }
 });
 
+stockItemSchema.statics.findByCode = function (code) {
+    return this.findOne({code: code});
+}
+
 module.exports = mongoose.model('StockItem', stockItemSchema);

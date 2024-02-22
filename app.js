@@ -9,7 +9,7 @@ require("dotenv").config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
-const MONGO_HOST = `mongodb+srv://${process.env.USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}`;
+const MONGO_HOST = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}`;
 mongoose.connect(MONGO_HOST, {
   retryWrites: true,
   w: 'majority',
