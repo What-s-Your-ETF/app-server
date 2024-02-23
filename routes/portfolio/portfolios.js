@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const StockItem = require('../../model/StockItem');
-const {getInvestResult} = require('../../service/portfolio/PortfolioService');
+const {getInvestResult} = require('../../sevices/portfolio/PortfolioService');
 
 /**
  * 포트폴리오 구성 및 수익률 계산
@@ -23,4 +23,4 @@ router.post('/', async function(req, res, next) {
         }).catch(err => {
         console.error(err);
     })
-}
+});
