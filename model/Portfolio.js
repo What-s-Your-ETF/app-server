@@ -21,9 +21,16 @@ const portfolioSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    returnRate: {
-        type: mongoose.Types.Decimal128
-    },
+    returnRates: [{
+        date: {
+            type: Date,
+            required: true
+        },
+        rate: {
+            type: mongoose.Types.Decimal128,
+            required: true
+        }
+    }],
     evaluationAmount: {
         type: mongoose.Types.Decimal128
     },
