@@ -96,4 +96,4 @@ router.post("/verifyToken", async (req, res, next) => {
 });
 
 
-module.exports = router;
+module.exports = {userRouter: router, authenticate};

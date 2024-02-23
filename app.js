@@ -28,11 +28,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
-const userRouter = require('./routes/user');
+const {userRouter} = require('./routes/user');
 app.use('/api/user', userRouter);
 
 const newsRouter = require('./routes/news');
 app.use('/api/news', newsRouter);
+
+const portfolioRouter = require('./routes/portfolio/portfolios');
+app.use('/api/portfolios', portfolioRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
