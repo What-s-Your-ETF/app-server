@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require("mongoose");
+const cors = require('cors');
 require("dotenv").config();
 
 
@@ -27,13 +28,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
+
 app.use('/', indexRouter);
 
-const userRouter = require('./routes/user');
+const {userRouter} = require('./routes/user');
 app.use('/api/user', userRouter);
 
 const newsRouter = require('./routes/news');
 app.use('/api/news', newsRouter);
+
+const portfolioRouter = require('./routes/portfolio/portfolios');
+app.use('/api/portfolios', portfolioRouter);
 
 const kakaoRouter = require('./routes/kakao');
 app.use('/api/kakao', kakaoRouter);
