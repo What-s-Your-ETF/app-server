@@ -46,11 +46,16 @@ async function getProfile(tokens){
 
 async function kakaoLogin(profiles){
     try{
-        const exUser = await User.findOne({
+        const exUser = await User.findOne({  //sns 회원 가입 여부
             snsId : profiles.id
-        })
+        });
+        const duplicateUser = await User.findOne({
+            email : profiles.kakao_account.email
+        });
         if(exUser){
             return true;
+        }else if(!exUser && duplicateUser){
+            return false;
         }else{
             const newUser = await User.create({
                 email : profiles.kakao_account.email,

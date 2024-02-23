@@ -5,7 +5,7 @@ const axios = require('axios');
 const { getToken, getProfile, kakaoLogin } = require('../sevices/auth/kakaoAuth');
 
 router.get('/',(req, res)=>{
-    const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${process.env.KAKAO_ID}&redirect_uri=${process.env.REDIRECT_URL}&scope=account_email`
+    const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${process.env.KAKAO_ID}&redirect_uri=${process.env.REDIRECT_URL}&scope=account_email,profile_nickname`
     res.redirect(url);
 });
 
@@ -16,7 +16,7 @@ router.get('/callback',async(req, res, next)=>{
         const access_token = tokens.access_token;   // 클라이언트에 넘겨줄 토큰.
 
         const profiles = await getProfile(tokens);  // 토큰으로 프로필 추출
-
+        console.log(profiles);
         const check = kakaoLogin(profiles);         // 로그인 됐는지
 
         if (check){
@@ -24,6 +24,8 @@ router.get('/callback',async(req, res, next)=>{
                 httpOnly: true,
                 maxAge: 60*60*24*3 * 1000,
             });
+        } else{
+            res.json({message : "이미 가입된 회원입니다."});
         }
 
         res.status(200).json({
