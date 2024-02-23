@@ -72,4 +72,14 @@ router.post('/', async function(req, res, next) {
     }
 });
 
+router.get('/', async function(req, res, next) {
+    try {
+        const portfolios = await Portfolio.find({user: req.user});
+        res.json(portfolios);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 module.exports = router;
