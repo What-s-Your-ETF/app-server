@@ -13,8 +13,8 @@ async function getInvestResult(dto) {
 
     const stockItems = [];
     let evaluationAmount;
-    let totalReturnRates = [];
-    Promise.all(
+    let totalReturnRates;
+    return Promise.all(
         itemCodes.map(code =>
             StockItem.findByCode(code)
                 .then(stockItem => {
@@ -25,13 +25,19 @@ async function getInvestResult(dto) {
         )).then(async () => {
         const eachRates = await accumulateEachReturnRates(stockItems, startDate, endDate);
         totalReturnRates = accumulateTotalReturnRates(eachRates, weights);
-        evaluationAmount = investAmounts * (1 + totalReturnRates[totalReturnRates.length - 1]);
-    });
+        evaluationAmount = investAmounts * (1 + totalReturnRates[totalReturnRates.length - 1].rate);
 
-    return {
-        evaluationAmount: evaluationAmount,
-        totalReturnRates: totalReturnRates,
-    }
+        return {
+            stockItems: stockItems.map((stockItem, index) => {
+                return {
+                    item: stockItem._id,
+                    weight: weights[index]
+                }
+            }),
+            evaluationAmount: evaluationAmount,
+            totalReturnRates: totalReturnRates,
+        }
+    });
 }
 
 /**
@@ -42,7 +48,7 @@ async function getInvestResult(dto) {
  * @returns {Promise<*[][]>}
  */
 async function accumulateEachReturnRates(stockItems, startDate, endDate) {
-    const rates = [[], [], []];
+    const rates = new Array(stockItems.length).fill([]);
     return Promise.all(
         stockItems.map((stockItem, index) =>
             StockPrice.find({
@@ -52,10 +58,14 @@ async function accumulateEachReturnRates(stockItems, startDate, endDate) {
                     $lte: endDate
                 }
             })
+                .sort({date: 1})
                 .then(prices => {
                     const criteria = prices[0].endPrice;
                     for (let i = 1; i < prices.length; i++) {
-                        rates[index].push((prices[i].endPrice - criteria) / criteria);
+                        rates[index].push({
+                            date: prices[i].date,
+                            rate: (prices[i].endPrice - criteria) / criteria
+                        });
                     }
                 })
                 .catch(err => {
@@ -69,20 +79,23 @@ async function accumulateEachReturnRates(stockItems, startDate, endDate) {
 
 /**
  * 종목별 수익률을 가중치에 따라 합산하는 함수
- * @param rates
+ * @param eachRates
  * @param weights
  * @returns {*[]}
  */
-function accumulateTotalReturnRates(rates, weights) {
-    const dailyRates = [];
-    for (let i = 0; i < rates[0].length; i++) {
+function accumulateTotalReturnRates(eachRates, weights) {
+    const totalRates = [];
+    for (let j = 0; j < eachRates[0].length; j++) { // 일별 수익률을 합산
         let totalRate = 0;
-        for (let j = 0; j < rates.length; j++) {
-            totalRate += rates[j][i] * weights[j];
+        for (let i = 0; i < eachRates.length; i++) { // 종목별 수익률을 가중치에 따라 합산
+            totalRate += eachRates[i][j].rate * weights[i];
         }
-        dailyRates.push(totalRate);
+        totalRates.push({
+            date: eachRates[0][j].date,
+            rate: totalRate,
+        });
     }
-    return dailyRates;
+    return totalRates;
 }
 
 module.exports = {getInvestResult};
