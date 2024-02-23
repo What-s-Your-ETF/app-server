@@ -23,9 +23,8 @@ async function getInvestResult(duration, investAmounts, itemCodes, weights) {
                 console.error(err);
             })
         )).then(async () => {
-        const eachRates = await calculateEachRates(stockItems, startDate, endDate); //accumulate_Return
-        const totalRates = calculateTotalRates(eachRates, weights);
-        console.log(totalRates);
+        const eachRates = await accumulateEachReturnRates(stockItems, startDate, endDate);
+        const totalRates = accumulateTotalReturnRates(eachRates, weights);
     });
 
     return {
@@ -41,7 +40,7 @@ async function getInvestResult(duration, investAmounts, itemCodes, weights) {
  * @param endDate
  * @returns {Promise<*[][]>}
  */
-async function calculateEachRates(stockItems, startDate, endDate) {
+async function accumulateEachReturnRates(stockItems, startDate, endDate) {
     const rates = [[], [], []];
     return Promise.all(
         stockItems.map((stockItem, index) =>
@@ -73,7 +72,7 @@ async function calculateEachRates(stockItems, startDate, endDate) {
  * @param weights
  * @returns {*[]}
  */
-function calculateTotalRates(rates, weights) {
+function accumulateTotalReturnRates(rates, weights) {
     const dailyRates = [];
     for (let i = 0; i < rates[0].length; i++) {
         let totalRate = 0;
