@@ -11,9 +11,8 @@ const userSchema = new mongoose.Schema({
         validator : [isEmail, "이메일이 올바르지 않습니다."],
         
     },
-    password : {
+    password : {        // 앞단에서 처리.
         type: String,
-        required : [true, "비밀번호를 입력하세요."],
         minlength : 8
     },
     name : {
@@ -24,6 +23,12 @@ const userSchema = new mongoose.Schema({
         type : String, 
         required: [true,"닉네임을 입력해주세요."], 
         unique : true
+    },
+    snsId : {               // SNS 회원가입 시에만 존재.
+        type : Number,
+    },
+    provider : {            // SNS 회원가입 시에만 존재.
+        type : String
     },
     createdAt : {type : Date, default : Date.now},
 });
