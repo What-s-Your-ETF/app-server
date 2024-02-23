@@ -3,17 +3,17 @@ const StockItem = require('../../model/StockItem');
 
 /**
  * 투자 결과를 계산하는 함수
- * @param duration eg. {startDate: new Date('2022-01-01'), endDate: new Date('2022-12-31')} (기간)
- * @param investAmounts eg. 1_000_000 (원)
- * @param itemCodes eg. ["000080", "000100", "000120"] (종목 코드)
- * @param weights eg. [0.3, 0.3, 0.4] (비중)
- * @returns {Promise<{evaluationAmount: number, dailyRates: *[]}>}
+ * @param dto
+ * @returns {Promise<{totalReturnRates: *[], evaluationAmount: number}>}
  */
-async function getInvestResult(duration, investAmounts, itemCodes, weights) {
+async function getInvestResult(dto) {
+    const {duration, investAmounts, itemCodes, weights} = dto;
     const startDate = duration.startDate;
     const endDate = duration.endDate;
 
     const stockItems = [];
+    let evaluationAmount;
+    let totalReturnRates = [];
     Promise.all(
         itemCodes.map(code =>
             StockItem.findByCode(code)
@@ -24,12 +24,13 @@ async function getInvestResult(duration, investAmounts, itemCodes, weights) {
             })
         )).then(async () => {
         const eachRates = await accumulateEachReturnRates(stockItems, startDate, endDate);
-        const totalRates = accumulateTotalReturnRates(eachRates, weights);
+        totalReturnRates = accumulateTotalReturnRates(eachRates, weights);
+        evaluationAmount = investAmounts * (1 + totalReturnRates[totalReturnRates.length - 1]);
     });
 
     return {
-        evaluationAmount: 0,
-        totalRates: [],
+        evaluationAmount: evaluationAmount,
+        totalReturnRates: totalReturnRates,
     }
 }
 
