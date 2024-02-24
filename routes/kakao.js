@@ -29,6 +29,7 @@ router.get('/callback',async(req, res, next)=>{
                 email : profiles.kakao_account.email,
                 name : profiles.properties.nickname,
                 nickname : profiles.properties.nickname,
+                authToken : access_token,
                 redirect_url : "http://localhost:3001/admin/dashboard",                //  카카오 로그인 성공. 메인 페이지로 이동
             });;
         } else{
