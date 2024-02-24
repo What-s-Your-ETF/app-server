@@ -25,6 +25,7 @@ router.get('/callback',async(req, res, next)=>{
                 maxAge: 60*60*24*3 * 1000,
             })
             res.status(200).json({
+                message : "success",
                 email : profiles.kakao_account.email,
                 name : profiles.properties.nickname,
                 nickname : profiles.properties.nickname,
