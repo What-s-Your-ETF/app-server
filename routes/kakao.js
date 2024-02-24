@@ -23,22 +23,22 @@ router.get('/callback',async(req, res, next)=>{
             res.cookie("authToken", access_token, {    //  쿠키로 보내는 방식
                 httpOnly: true,
                 maxAge: 60*60*24*3 * 1000,
-            });
+            })
+            res.status(200).json({
+                email : profiles.kakao_account.email,
+                name : profiles.properties.nickname,
+                nickname : profiles.properties.nickname,
+                redirect_url : "http://localhost:3001/admin/dashboard",                //  카카오 로그인 성공. 메인 페이지로 이동
+            });;
         } else{
-            res.json({message : "이미 가입된 회원입니다."});
+            res.json({message : "signup member", redirect_url : "http://localhost:3001/admin/login"});    // 기존 가입 회원. 로그인 페이지로 이동.
         }
 
-        res.status(200).json({
-            email : profiles.kakao_account.email,
-            name : profiles.properties.nickname,
-            nickname : profiles.properties.nickname,
-        });
-
-    } catch (error) {
+    } catch (error) {                           //  카카오 인증 실패. 카카오 로그인 페이지로 다시 이동.
         console.error(error);
-        res.status(500).send('Authentication failed');
+        res.json({message : "Error. Please to check logic"});
     }
-})
+});
 
 
 module.exports = router;
