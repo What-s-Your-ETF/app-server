@@ -13,7 +13,7 @@ router.use(authenticate, function(req, res, next) {
 /**
  * 포트폴리오 구성 및 수익률 계산
  * POST /portfolios
- * <request>
+ * <request>    
  * {
  *     "name": "My Portfolio",
  *     "duration": {

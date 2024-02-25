@@ -12,5 +12,4 @@ router.post("/getnews", async(req, res, next)=>{
     }
 });
 
-
 module.exports = router;

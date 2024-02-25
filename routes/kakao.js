@@ -80,7 +80,7 @@ router.get('/callback2',async(req, res, next)=>{
                 name : profiles.properties.nickname,
                 nickname : profiles.properties.nickname,
                 authToken : access_token,
-                redirect_url : "http://localhost:3001/admin/dashboard",                //  카카오 로그인 성공. 메인 페이지로 이동
+                redirect_url : "http://localhost:3001/admin/dashboard",  //  카카오 로그인 성공. 메인 페이지로 이동
             });;
         } else{
             res.json({message : "signup member", redirect_url : "http://localhost:3001/admin/login"});    // 기존 가입 회원. 로그인 페이지로 이동.

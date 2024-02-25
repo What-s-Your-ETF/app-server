@@ -42,8 +42,9 @@ router.post('/login', async(req, res, next)=>{
 
 async function authenticate(req, res, next) {
     let token = req.cookies.authToken;
-    let headerToken = req.headers.authorization;  // 헤더로 받기
-
+    let headerToken = req.headers.authorization ;  // 헤더로 받기
+    
+    console.log(token, headerToken)
     if (!token && headerToken) {                // 헤더로 받을 경우
         token = headerToken.split(" ")[1];
     }
