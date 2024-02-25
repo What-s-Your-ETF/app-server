@@ -9,7 +9,7 @@ router.get('/',(req, res)=>{
     res.redirect(url);
 });
 
-router.get('/callback', async (req, res, next) => {
+router.get('/callback2', async (req, res, next) => {
     try {
         const tokens = await getToken(req, res); // 토큰 추출
         const access_token = tokens.access_token; // 클라이언트에 넘겨줄 토큰
@@ -35,7 +35,7 @@ router.get('/callback', async (req, res, next) => {
                 </script>
             `;
             res.send(script);
-        } else {                    // 카카오가 아닌 회원가입 유저.
+        } else {                // 카카오가 아닌 회원가입 유저.
             const script = `
                 <script>
                 alert("다른 방식으로 가입하셨습니다. 로그인을 확인해주세요.");
@@ -59,7 +59,7 @@ router.get('/callback', async (req, res, next) => {
 });
 
 
-router.get('/callback2',async(req, res, next)=>{
+router.get('/callback',async(req, res, next)=>{
 
     try {
         const tokens = await getToken(req, res);    // 토큰 추출
