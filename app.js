@@ -37,7 +37,7 @@ app.use('/api/user', userRouter);
 const newsRouter = require('./routes/news');
 app.use('/api/news', newsRouter);
 
-const portfolioRouter = require('./routes/portfolio/portfolios');
+const portfolioRouter = require('./routes/portfolios');
 app.use('/api/portfolios', portfolioRouter);
 
 // catch 404 and forward to error handler

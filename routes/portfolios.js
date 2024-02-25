@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Portfolio = require('../../model/Portfolio');
-const {getInvestResult} = require('../../sevices/portfolio/PortfolioService');
-const {authenticate} = require('../user');
-const CreateInvestResultDto = require('../../dto/request/CreateInvestResultDto');
-const CreatePortfolioDto = require('../../dto/request/CreatePortfolioDto');
+const Portfolio = require('../model/Portfolio');
+const {getInvestResult} = require('../sevices/portfolio/PortfolioService');
+const {authenticate} = require('./user');
+const CreateInvestResultDto = require('../dto/request/CreateInvestResultDto');
+const CreatePortfolioDto = require('../dto/request/CreatePortfolioDto');
 
 router.use(authenticate, function(req, res, next) {
     next();
