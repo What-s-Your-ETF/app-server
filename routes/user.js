@@ -47,7 +47,7 @@ async function authenticate(req, res, next) {
     if (!token && headerToken) {                // 헤더로 받을 경우
         token = headerToken.split(" ")[1];
     }
-    
+    console.log("Received Token:", token);
     const user = tokenClass.verifyToken(token);
 
     req.user = user;
@@ -60,7 +60,7 @@ async function authenticate(req, res, next) {
     next();
 }
 
-router.all("/logout", authenticate, async (req, res, next) => {
+router.all("/logout", async (req, res, next) => {
     try {
         res.cookie("authToken", '', {
             httpOnly: true,
