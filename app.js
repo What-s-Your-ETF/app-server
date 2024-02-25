@@ -38,8 +38,11 @@ app.use('/api/user', userRouter);
 const newsRouter = require('./routes/news');
 app.use('/api/news', newsRouter);
 
-const portfolioRouter = require('./routes/portfolio/portfolios');
+const portfolioRouter = require('./routes/portfolios');
 app.use('/api/portfolios', portfolioRouter);
+
+const stockRouter = require('./routes/stock');
+app.use('/api/stocks', stockRouter);
 
 const kakaoRouter = require('./routes/kakao');
 app.use('/api/kakao', kakaoRouter);

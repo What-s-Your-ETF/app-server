@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Portfolio = require('../../model/Portfolio');
-const {getInvestResult} = require('../../sevices/portfolio/PortfolioService');
-const {authenticate} = require('../user');
-const CreateInvestResultDto = require('../../dto/request/CreateInvestResultDto');
-const CreatePortfolioDto = require('../../dto/request/CreatePortfolioDto');
+const Portfolio = require('../model/Portfolio');
+const {getInvestResult} = require('../sevices/portfolio/portfolio-service');
+const {authenticate} = require('./user');
+const CreateInvestResultDto = require('../dto/request/CreateInvestResultDto');
+const CreatePortfolioDto = require('../dto/request/CreatePortfolioDto');
 
 router.use(authenticate, function(req, res, next) {
     next();
@@ -76,6 +76,22 @@ router.get('/', async function(req, res, next) {
     try {
         const portfolios = await Portfolio.find({user: req.user});
         res.json(portfolios);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/:portfolioId', async function(req, res, next) {
+    try {
+        const portfolio = await Portfolio.findById(req.params.portfolioId);
+
+        if (portfolio._doc.user.equals(req.user._id)) {
+            const error = new Error("Forbidden");
+            error.status = 403;
+            throw(error);
+        }
+        res.json(portfolio);
     } catch (err) {
         console.error(err);
         next(err);
