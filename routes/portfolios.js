@@ -82,4 +82,20 @@ router.get('/', async function(req, res, next) {
     }
 });
 
+router.get('/:portfolioId', async function(req, res, next) {
+    try {
+        const portfolio = await Portfolio.findById(req.params.portfolioId);
+
+        if (portfolio._doc.user.equals(req.user._id)) {
+            const error = new Error("Forbidden");
+            error.status = 403;
+            throw(error);
+        }
+        res.json(portfolio);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 module.exports = router;
