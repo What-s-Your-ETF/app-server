@@ -9,7 +9,7 @@ router.get('/',(req, res)=>{
     res.redirect(url);
 });
 
-router.get('/callback2', async (req, res, next) => {
+router.get('/callback', async (req, res, next) => {
     try {
         const tokens = await getToken(req, res); // 토큰 추출
         const access_token = tokens.access_token; // 클라이언트에 넘겨줄 토큰
@@ -59,7 +59,7 @@ router.get('/callback2', async (req, res, next) => {
 });
 
 
-router.get('/callback',async(req, res, next)=>{
+router.get('/callback2',async(req, res, next)=>{
 
     try {
         const tokens = await getToken(req, res);    // 토큰 추출
