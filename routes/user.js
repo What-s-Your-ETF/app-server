@@ -66,10 +66,10 @@ router.all("/logout", authenticate, async (req, res, next) => {
             httpOnly: true,
             expires: new Date(Date.now()),
         });
-        res.json({message : "로그아웃 완료"});
+        res.status(200).json({message : "success"});
     } catch (err) {
         console.error(err);
-        res.status(400);
+        res.status(400).json({message : "fail"});
         next(err);
     }
 });
