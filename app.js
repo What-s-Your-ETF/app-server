@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 require("dotenv").config();
 
+
 const indexRouter = require('./routes/index');
 
 const MONGO_HOST = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}`;
@@ -42,6 +43,10 @@ app.use('/api/portfolios', portfolioRouter);
 
 const stockRouter = require('./routes/stock');
 app.use('/api/stocks', stockRouter);
+
+const kakaoRouter = require('./routes/kakao');
+app.use('/api/kakao', kakaoRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
