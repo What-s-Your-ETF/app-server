@@ -40,6 +40,9 @@ app.use('/api/news', newsRouter);
 const portfolioRouter = require('./routes/portfolios');
 app.use('/api/portfolios', portfolioRouter);
 
+const stockRouter = require('./routes/stock');
+app.use('/api/stocks', stockRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

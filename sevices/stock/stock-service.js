@@ -8,10 +8,14 @@ const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/
 const FETCH_STOCK_THEMES_URL = 'https://finance.naver.com/sise/theme.naver';
 const codeToName = new Map();
 
-export async function getTop10StockThemes() {
+/**
+ * 네이버페이 증권의 테마별 시세를 크롤링하여 상위 10개 종목을 반환하는 함수
+ * @returns {Promise<{lead1: any, lead2: any, name: *, volatility: *}[]>}
+ */
+async function getTop10StockThemes() {
     const service = getAxiosInstance();
 
-    const response = await service.get('/');
+    const response = await service.get('');
     const content = iconv.decode(response.data, ENCODING);
 
     let $ = cheerio.load(content);
@@ -78,3 +82,5 @@ async function initCodeMap(codes) {
             console.error(err);
         });
 }
+
+module.exports = {getTop10StockThemes};
