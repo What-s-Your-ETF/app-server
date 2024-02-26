@@ -24,7 +24,8 @@ router.get('/callback', async (req, res, next) => {
                 email: profiles.kakao_account.email,
                 name: profiles.properties.nickname,
                 nickname: profiles.properties.nickname,
-                authToken: access_token
+                authToken: access_token,
+                loginType : 'kakao',
             };
 
             // 자식 창에서 부모 창으로 로그인 결과를 전송. 자식창을(팝업창) 띄우는 곳이 여기이기에 document 로 전달.
@@ -34,8 +35,11 @@ router.get('/callback', async (req, res, next) => {
                 window.close();
                 </script>
             `;
-            res.send(script);
-        } else {                    // 카카오가 아닌 회원가입 유저.
+            res.cookie("authToken", access_token, {    //  쿠키로 보내는 방식
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 3 * 1000,
+            }).send(script);
+        } else {                // 카카오가 아닌 회원가입 유저.
             const script = `
                 <script>
                 alert("다른 방식으로 가입하셨습니다. 로그인을 확인해주세요.");
