@@ -31,6 +31,7 @@ async function getInvestResult(dto) {
             stockItems: stockItems.map((stockItem, index) => {
                 return {
                     item: stockItem._id,
+                    name: stockItem.name,
                     weight: weights[index]
                 }
             }),
