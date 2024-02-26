@@ -3,6 +3,7 @@ const router = express.Router();
 let User = require('../model/User.js');
 const tokenClass = require('../sevices/auth/auth.js');
 const auth = require('../sevices/auth/auth.js');
+const getProfile = require('../sevices/auth/kakaoAuth.js');
 
 router.post("/signup", async(req, res, next)=>{
     try{
@@ -25,6 +26,7 @@ router.post('/login', async(req, res, next)=>{
         const tokenMaxAge = 60 * 60 * 24 * 3;
         const token = tokenClass.createToken(user, tokenMaxAge);
         user.token = token;
+        user.loginType = "general";
 
         res.cookie("authToken", token, {    //  쿠키로 보내는 방식
             httpOnly: true,
@@ -47,8 +49,17 @@ async function authenticate(req, res, next) {
     if (!token && headerToken) {                // 헤더로 받을 경우
         token = headerToken.split(" ")[1];
     }
-    
-    const user = tokenClass.verifyToken(token);
+
+    console.log("Received Token:", token);
+
+    const loginType = req.headers.loginType;
+    const user = null;
+    if(loginType === 'kakao'){
+        user = await getProfile(token);
+    }
+    else{
+        user = tokenClass.verifyToken(token);
+    }
 
     req.user = user;
 
@@ -60,7 +71,7 @@ async function authenticate(req, res, next) {
     next();
 }
 
-router.all("/logout", authenticate, async (req, res, next) => {
+router.all("/logout", async (req, res, next) => {
     try {
         res.cookie("authToken", '', {
             httpOnly: true,
