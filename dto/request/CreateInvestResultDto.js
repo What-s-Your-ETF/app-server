@@ -14,7 +14,10 @@ class CreateInvestResultDto {
 
     static fromRequest(req) {
         return new CreateInvestResultDto(
-            req.body.duration,
+            {
+                startDate: new Date(req.body.duration.startDate),
+                endDate: new Date(req.body.duration.endDate)
+            },
             req.body.investAmounts,
             req.body.itemCodes,
             req.body.weights

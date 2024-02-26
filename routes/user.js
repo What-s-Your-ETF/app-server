@@ -53,7 +53,7 @@ async function authenticate(req, res, next) {
     console.log("Received Token:", token);
 
     const loginType = req.headers.loginType;
-    const user = null;
+    let user = null;
     if(loginType === 'kakao'){
         user = await getProfile(token);
     }
