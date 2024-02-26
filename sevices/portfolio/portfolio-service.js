@@ -48,33 +48,32 @@ async function getInvestResult(dto) {
  * @returns {Promise<*[][]>}
  */
 async function accumulateEachReturnRates(stockItems, startDate, endDate) {
-    const rates = new Array(stockItems.length).fill([]);
-    return Promise.all(
-        stockItems.map((stockItem, index) =>
-            StockPrice.find({
-                stockItem: stockItem._id,
-                date: {
-                    $gte: startDate,
-                    $lte: endDate
+    const rates = Array.from({length: stockItems.length}, () => []);
+    for (let i = 0; i < stockItems.length; i++) {
+        const stockItem = stockItems[i];
+        const rate = rates[i];
+        await StockPrice.find({
+            stockItem: stockItem._id,
+            date: {
+                $gte: startDate,
+                $lte: endDate
+            }
+        })
+            .sort({date: 1})
+            .then(prices => {
+                const criteria = prices[0].endPrice;
+                for (let j = 1; j < prices.length; j++) {
+                    rate.push({
+                        date: prices[j].date,
+                        rate: (prices[j].endPrice - criteria) / criteria
+                    });
                 }
             })
-                .sort({date: 1})
-                .then(prices => {
-                    const criteria = prices[0].endPrice;
-                    for (let i = 1; i < prices.length; i++) {
-                        rates[index].push({
-                            date: prices[i].date,
-                            rate: (prices[i].endPrice - criteria) / criteria
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                })
-        )).then(() => {
-            return rates;
-        }
-    );
+            .catch(err => {
+                console.error(err);
+            })
+    }
+    return rates;
 }
 
 /**
