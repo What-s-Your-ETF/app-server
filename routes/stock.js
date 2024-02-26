@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {getTop10StockThemes} = require('../sevices/stock/stock-service');
+const {get10StockThemes} = require('../sevices/stock/stock-service');
 
-router.get('/rank', async (req, res, next) => {
+router.get('/themes/rank', async (req, res, next) => {
     try {
-        const response = await getTop10StockThemes();
+        const response = await get10StockThemes(req.query.ordering ? req.query.ordering : 'desc');
         res.json(response);
     } catch (err) {
         console.error(err);
