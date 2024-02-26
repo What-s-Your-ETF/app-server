@@ -42,6 +42,16 @@ router.post('/login', async(req, res, next)=>{
     }
 });
 
+router.get('/:id', (req, res, next)=>{
+    
+    User.findById(req.params.id).then(data=>{
+        res.json(data);
+    })
+    .catch(err=>{
+        return next(err);
+    })
+});
+
 async function authenticate(req, res, next) {
     let token = req.cookies.authToken;
     let headerToken = req.headers.authorization ;  // 헤더로 받기

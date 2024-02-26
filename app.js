@@ -47,6 +47,9 @@ app.use('/api/stocks', stockRouter);
 const kakaoRouter = require('./routes/kakao');
 app.use('/api/kakao', kakaoRouter);
 
+const boardRouter = require('./routes/board');
+app.use('/api/board', boardRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
