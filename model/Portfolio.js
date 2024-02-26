@@ -11,6 +11,10 @@ const portfolioSchema = new mongoose.Schema({
             ref: 'StockItem',
             required: true
         },
+        name: {
+            type: String,
+            required: true
+        },
         weight: {
             type: mongoose.Types.Decimal128,
             required: true
