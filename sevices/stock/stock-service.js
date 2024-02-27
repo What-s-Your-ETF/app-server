@@ -2,6 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const iconv = require('iconv-lite');
 const StockItem = require('../../model/StockItem');
+const StockPrice = require('../../model/StockPrice');
 
 const ENCODING = 'euc-kr';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -13,7 +14,7 @@ const codeToName = new Map();
  * @returns {Promise<{lead1: any, lead2: any, name: *, volatility: *}[]>}
  * @param ordering
  */
-async function get10StockThemes(ordering='desc') {
+async function get10StockThemes(ordering = 'desc') {
     const service = getAxiosInstance();
 
     const params = {filed: "change_rate", ordering: ordering};
@@ -35,6 +36,40 @@ async function get10StockThemes(ordering='desc') {
 
 }
 
+/**
+ * 개별 종목 수익률 추이를 반환하는 함수 (1개월, 3개월, 6개월, 1년)
+ * @returns {Promise<Map<any, any>>}
+ * @param stockItems
+ * @param duration
+ */
+async function getReturnTrend(stockItems, duration) {
+    const startDate = duration.startDate;
+    const endDate = duration.endDate;
+    const oneYearAfterStartDate = new Date(new Date(startDate).setFullYear(startDate.getFullYear() + 1));
+
+    const result = [];
+    for (const stockItem of stockItems) {
+        try {
+            const stockPrices = await StockPrice.find({
+                stockItem: stockItem._id,
+                date: {
+                    $gte: startDate,
+                    $lte: oneYearAfterStartDate > endDate ? oneYearAfterStartDate : endDate
+                }
+            });
+            result.push({
+                stockItem: stockItem._id,
+                endPrice: stockPrices[stockPrices.length - 1]._doc.endPrice,
+                returnTrend: calculateReturnTrend(stockPrices)
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+    return result;
+}
+
+//== private methods ==//
 function getAxiosInstance() {
     return axios.create({
         baseURL: FETCH_STOCK_THEMES_URL,
@@ -85,4 +120,49 @@ async function initCodeMap(codes) {
         });
 }
 
-module.exports = {get10StockThemes};
+function isWeekend(date) {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+}
+
+const isSameDate = (date1, date2) => {
+    return date1.getFullYear() === date2.getFullYear()
+        && date1.getMonth() === date2.getMonth()
+        && date1.getDate() === date2.getDate();
+}
+
+function calculateReturnTrend(stockPrices) {
+
+    const startDate = stockPrices[0]._doc.date;
+    const endDate = stockPrices[stockPrices.length - 1]._doc.date;
+    const periods = [30, 90, 180, 365]; // 1개월, 3개월, 6개월, 1년
+
+    const refPrice = stockPrices[0]._doc.endPrice;
+    const returnTrend = [];
+    for (const period of periods) {
+        const targetDate = new Date(startDate);
+        targetDate.setDate(targetDate.getDate() + period);
+
+        let stockPrice;
+        while (targetDate <= endDate) {
+            if (isWeekend(targetDate)) {
+                targetDate.setDate(targetDate.getDate() + 1);
+                continue;
+            }
+            stockPrice = stockPrices.find((price) => isSameDate(price._doc.date, targetDate));
+            if (stockPrice) {
+                break;
+            }
+            targetDate.setDate(targetDate.getDate() + 1);
+        }
+
+        const rate = (stockPrice._doc.endPrice - refPrice) / refPrice;
+        returnTrend.push({
+            date: targetDate,
+            rate: rate
+        });
+    }
+    return returnTrend;
+}
+
+module.exports = {get10StockThemes, getReturnTrend};
