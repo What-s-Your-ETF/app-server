@@ -21,7 +21,11 @@ router.get('/', async (req, res, next) => {
     }
 
     try {
-        const stockItems = await StockItem.paginate({isKospi200: req.query.isKospi200 || false}, options);
+        const stockItems = await StockItem.paginate({
+                isKospi200: req.query.isKospi200 || false,
+                name: req.query.name || ''
+            },
+            options);
         res.json(stockItems);
     } catch (err) {
         console.error(err);
