@@ -19,11 +19,13 @@ router.get('/', async (req, res, next) => {
         page: req.query.page || 1,
         limit: req.query.limit || 10,
     }
+    const regex = (pattern) => new RegExp(`.*${pattern}.*`);
+    const nameRegex = regex(req.query.name || '');
 
     try {
         const stockItems = await StockItem.paginate({
                 isKospi200: req.query.isKospi200 || false,
-                name: req.query.name || ''
+                name: {$regex: nameRegex}
             },
             options);
         res.json(stockItems);
