@@ -4,6 +4,7 @@ let User = require('../model/User.js');
 const tokenClass = require('../sevices/auth/auth.js');
 const auth = require('../sevices/auth/auth.js');
 const {checkUser} = require('../sevices/auth/kakaoAuth.js');
+const Portfolio = require('../model/Portfolio.js');
 
 router.post("/signup", async(req, res, next)=>{
     try{
@@ -64,10 +65,11 @@ async function authenticate(req, res, next) {
     const loginType = req.headers.logintype;
     var user = null;
 
-    if(loginType === 'kakao'){
-        user = await checkUser(token);
+    if(loginType === 'kakao'){  // 카카오 회원일때
+        const data = await checkUser(headerToken);
+        user = await User.find({ email : data.kakao_account.email});
     }
-    else{
+    else{                       // 일반회원일때
         user = tokenClass.verifyToken(token);
     }
 
