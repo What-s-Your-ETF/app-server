@@ -44,6 +44,22 @@ async function getProfile(tokens){
     }
 }
 
+async function checkUser(token){
+    try{
+        const result = await axios({
+            method : 'post',
+            url : 'https://kapi.kakao.com/v2/user/me',
+            headers :{
+                'Authorization' : `Bearer ${token}`,
+                'Content-type' : 'application/x-www-form-urlencoded;charset=utf-8',
+            },
+        })
+        return result.data;
+    }catch(err){
+        console.error(err);
+    }
+}
+
 async function kakaoLogin(profiles){
     try{
         const exUser = await User.findOne({  //sns 회원 가입 여부
@@ -71,4 +87,4 @@ async function kakaoLogin(profiles){
     }
 }
 
-module.exports = {getToken, getProfile, kakaoLogin};
+module.exports = {getToken, getProfile, kakaoLogin, checkUser};
