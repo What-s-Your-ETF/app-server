@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Portfolio = require('../model/Portfolio');
+const StockItem = require('../model/StockItem');
+const StockPrice = require('../model/StockPrice');
 const {getInvestResult} = require('../sevices/portfolio/portfolio-service');
 const {authenticate} = require('./user');
 const CreateInvestResultDto = require('../dto/request/CreateInvestResultDto');
 const CreatePortfolioDto = require('../dto/request/CreatePortfolioDto');
+
+const CODE_KODEX200 = "069500";
 
 router.use(authenticate, function(req, res, next) {
     next();
@@ -92,6 +96,42 @@ router.get('/:portfolioId', async function(req, res, next) {
             throw(error);
         }
         res.json(portfolio);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/:portfolioId/kospi-index', async function(req, res, next) {
+    try {
+        const portfolio = await Portfolio.findById(req.params.portfolioId);
+        const KODEX200 = await StockItem.findOne({
+            code: CODE_KODEX200,
+        });
+        const stockPrices = await StockPrice.find({
+            stockItem: KODEX200._id,
+            date: {
+                $gte: portfolio.duration.startDate,
+                $lte: portfolio.duration.endDate
+            }
+        }).sort({date: 1});
+        res.json(stockPrices);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.delete('/:portfolioId', async function(req, res, next) {
+    try {
+        const portfolio = await Portfolio.findById(req.params.portfolioId);
+        if (portfolio._doc.user.equals(req.user._id)) {
+            const error = new Error("Forbidden");
+            error.status = 403;
+            throw(error);
+        }
+        await Portfolio.findByIdAndDelete(req.params.portfolioId);
+        res.json({message: "success"});
     } catch (err) {
         console.error(err);
         next(err);
