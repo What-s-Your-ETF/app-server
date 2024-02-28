@@ -8,6 +8,7 @@ const ENCODING = 'euc-kr';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const FETCH_STOCK_THEMES_URL = 'https://finance.naver.com/sise/theme.naver';
 const codeToName = new Map();
+const LIMIT_DATE = new Date('2017-01-01');
 
 /**
  * 네이버페이 증권의 테마별 시세를 크롤링하여 상위/하위 10개 종목을 반환하는 함수
@@ -38,14 +39,13 @@ async function get10StockThemes(ordering = 'desc') {
 
 /**
  * 개별 종목 수익률 추이를 반환하는 함수 (1개월, 3개월, 6개월, 1년)
- * @returns {Promise<Map<any, any>>}
+ * @returns {Promise<*[]>}
  * @param stockItems
  * @param duration
  */
 async function getReturnTrend(stockItems, duration) {
-    const startDate = duration.startDate;
     const endDate = duration.endDate;
-    const oneYearAfterStartDate = new Date(new Date(startDate).setFullYear(startDate.getFullYear() + 1));
+    const oneYearAgo = getOneYearAgo(endDate);
 
     const result = [];
     for (const stockItem of stockItems) {
@@ -53,8 +53,8 @@ async function getReturnTrend(stockItems, duration) {
             const stockPrices = await StockPrice.find({
                 stockItem: stockItem._id,
                 date: {
-                    $gte: startDate,
-                    $lte: oneYearAfterStartDate > endDate ? oneYearAfterStartDate : endDate
+                    $gte: oneYearAgo > LIMIT_DATE ? oneYearAgo : LIMIT_DATE,
+                    $lte: endDate
                 }
             });
             result.push({
@@ -120,6 +120,13 @@ async function initCodeMap(codes) {
         });
 }
 
+function getOneYearAgo(date) {
+    const oneYearAgo = new Date(date);
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    oneYearAgo.setMonth(oneYearAgo.getMonth() - 1); // 1년 전보다 1달 더 빠르게 설정
+    return oneYearAgo;
+}
+
 function isWeekend(date) {
     const day = date.getDay();
     return day === 0 || day === 6;
@@ -133,30 +140,29 @@ const isSameDate = (date1, date2) => {
 
 function calculateReturnTrend(stockPrices) {
 
-    const startDate = stockPrices[0]._doc.date;
     const endDate = stockPrices[stockPrices.length - 1]._doc.date;
     const periods = [30, 90, 180, 365]; // 1개월, 3개월, 6개월, 1년
 
-    const refPrice = stockPrices[0]._doc.endPrice;
+    const refPrice = stockPrices[stockPrices.length - 1]._doc.endPrice;
     const returnTrend = [];
     for (const period of periods) {
-        const targetDate = new Date(startDate);
-        targetDate.setDate(targetDate.getDate() + period);
+        const targetDate = new Date(endDate);
+        targetDate.setDate(targetDate.getDate() - period);
 
         let stockPrice;
-        while (targetDate <= endDate) {
+        while (targetDate >= LIMIT_DATE) {
             if (isWeekend(targetDate)) {
-                targetDate.setDate(targetDate.getDate() + 1);
+                targetDate.setDate(targetDate.getDate() - 1);
                 continue;
             }
             stockPrice = stockPrices.find((price) => isSameDate(price._doc.date, targetDate));
             if (stockPrice) {
                 break;
             }
-            targetDate.setDate(targetDate.getDate() + 1);
+            targetDate.setDate(targetDate.getDate() - 1);
         }
 
-        const rate = (stockPrice._doc.endPrice - refPrice) / refPrice;
+        const rate = (refPrice - stockPrice._doc.endPrice) / stockPrice._doc.endPrice;
         returnTrend.push({
             date: targetDate,
             rate: rate
