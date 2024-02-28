@@ -58,7 +58,11 @@ async function getReturnTrend(stockItems, duration) {
                 }
             });
             result.push({
-                stockItem: stockItem._id,
+                stockItem: {
+                    _id: stockItem._id,
+                    code: stockItem.code,
+                    name: stockItem.name
+                },
                 endPrice: stockPrices[stockPrices.length - 1]._doc.endPrice,
                 returnTrend: calculateReturnTrend(stockPrices)
             });
