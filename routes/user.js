@@ -57,7 +57,6 @@ async function authenticate(req, res, next) {
     let token = req.cookies.authToken;
     let headerToken = req.headers.authorization ;  // 헤더로 받기
     
-    console.log('header token : ', headerToken)
     if (!token && headerToken) {                // 헤더로 받을 경우
         token = headerToken.split(" ")[1];
     }
@@ -66,13 +65,16 @@ async function authenticate(req, res, next) {
     var user = null;
 
     if(loginType === 'kakao'){  // 카카오 회원일때
+        if (headerToken.startsWith("Bearer ")) {
+            headerToken = headerToken.replace("Bearer ", "")
+            console.log('header token 2 :', headerToken);
+        }
         const data = await checkUser(headerToken);
-        user = await User.find({ email : data.kakao_account.email});
+        user = await User.findOne({ email : data.kakao_account.email});
     }
     else{                       // 일반회원일때
         user = tokenClass.verifyToken(token);
     }
-
     req.user = user;
 
     if (!user) {
