@@ -48,20 +48,21 @@ async function getReturnTrend(stockItems, duration) {
     const oneYearAgo = getOneYearAgo(endDate);
 
     const result = [];
-    for (const stockItem of stockItems) {
+    for (const item of stockItems) {
         try {
             const stockPrices = await StockPrice.find({
-                stockItem: stockItem._id,
+                stockItem: item._id,
                 date: {
                     $gte: oneYearAgo > LIMIT_DATE ? oneYearAgo : LIMIT_DATE,
                     $lte: endDate
                 }
             });
+            const stockItem = await StockItem.findById(item._id);
             result.push({
                 stockItem: {
-                    _id: stockItem._id,
-                    code: stockItem.code,
-                    name: stockItem.name
+                    _id: stockItem._doc._id,
+                    code: stockItem._doc.code,
+                    name: stockItem._doc.name
                 },
                 endPrice: stockPrices[stockPrices.length - 1]._doc.endPrice,
                 returnTrend: calculateReturnTrend(stockPrices)
