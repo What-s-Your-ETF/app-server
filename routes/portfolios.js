@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Portfolio = require('../model/Portfolio');
-const {getInvestResult} = require('../sevices/portfolio/portfolio-service');
+const {getInvestResult, accumulateEachReturnRates } = require('../sevices/portfolio/portfolio-service');
 const {authenticate} = require('./user');
 const CreateInvestResultDto = require('../dto/request/CreateInvestResultDto');
 const CreatePortfolioDto = require('../dto/request/CreatePortfolioDto');
@@ -92,6 +92,19 @@ router.get('/:portfolioId', async function(req, res, next) {
             throw(error);
         }
         res.json(portfolio);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.delete('/:portfolioId', async function(req, res, next) {
+    console.log(1)
+    try {
+        console.log(req.params.portfolioId)
+        Portfolio.findByIdAndDelete(req.params.portfolioId).then(resp=>{
+            res.json(resp)
+        })
     } catch (err) {
         console.error(err);
         next(err);

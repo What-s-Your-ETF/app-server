@@ -118,4 +118,4 @@ function isWeekend(date) {
     return date.getDay() === 0 || date.getDay() === 6;
 }
 
-module.exports = {getInvestResult};
+module.exports = {getInvestResult, accumulateEachReturnRates};
