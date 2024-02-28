@@ -3,7 +3,8 @@ const router = express.Router();
 let User = require('../model/User.js');
 const tokenClass = require('../sevices/auth/auth.js');
 const auth = require('../sevices/auth/auth.js');
-const getProfile = require('../sevices/auth/kakaoAuth.js');
+const {checkUser} = require('../sevices/auth/kakaoAuth.js');
+const Portfolio = require('../model/Portfolio.js');
 
 router.post("/signup", async(req, res, next)=>{
     try{
@@ -56,19 +57,19 @@ async function authenticate(req, res, next) {
     let token = req.cookies.authToken;
     let headerToken = req.headers.authorization ;  // 헤더로 받기
     
-    console.log(token, headerToken)
+    console.log('header token : ', headerToken)
     if (!token && headerToken) {                // 헤더로 받을 경우
         token = headerToken.split(" ")[1];
     }
 
-    console.log("Received Token:", token);
-
-    const loginType = req.headers.loginType;
+    const loginType = req.headers.logintype;
     var user = null;
-    if(loginType === 'kakao'){
-        user = await getProfile(token);
+
+    if(loginType === 'kakao'){  // 카카오 회원일때
+        const data = await checkUser(headerToken);
+        user = await User.find({ email : data.kakao_account.email});
     }
-    else{
+    else{                       // 일반회원일때
         user = tokenClass.verifyToken(token);
     }
 

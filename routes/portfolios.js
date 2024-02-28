@@ -80,7 +80,7 @@ router.get('/', async function(req, res, next) {
         console.error(err);
         next(err);
     }
-});
+}); 
 
 router.get('/:portfolioId', async function(req, res, next) {
     try {
