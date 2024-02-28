@@ -33,7 +33,9 @@ router.post('/',(req,res,next)=>{
 });
 
 router.put('/:id',(req,res,next)=>{
-    Board.findByIdAndUpdate(req.params.id,{ title:req.body.title, content: req.body.content, author:req.body.author})
+    console.log(req.body)
+    console.log(req.params.id)
+    Board.findByIdAndUpdate(req.params.id,{ title:req.body.title, content: req.body.content, nickname:req.body.nickname})
     .then(data=>{
         res.json(data);
     })
