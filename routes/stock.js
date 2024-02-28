@@ -42,8 +42,8 @@ router.post('/return-trend', async (req, res, next) => {
         endDate: new Date(req.body.duration.endDate)
     }
     try {
-        const response = await getReturnTrend(req.body.stockItems, duration);
-        res.json(response);
+        const returnTrend = await getReturnTrend(req.body.stockItems, duration);
+        res.json(returnTrend);
     } catch (err) {
         console.error(err);
         res.status(400).json({message: "fail"});
