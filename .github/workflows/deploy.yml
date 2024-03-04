@@ -34,16 +34,6 @@ jobs:
           cat << EOF >> .env
           ${{ secrets.ENV }}
 
-      - name: Checkout app-front repository
-        uses: actions/checkout@v4
-        with:
-          repository: What-s-Your-ETF/app-front
-          ref: dev  # branch or tag name from which you want to fetch files
-
-      - name: Copy files
-        run: |
-          cp -r app-front/project/* ./app-front/project/
-
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
