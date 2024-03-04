@@ -79,7 +79,12 @@ router.post('/', async function(req, res, next) {
 router.get('/', async function(req, res, next) {
     try {
         const portfolios = await Portfolio.find({user: req.user});
-        res.json(portfolios);
+        res.json(portfolios.map(portfolio => {
+            return {
+                _id: portfolio._id,
+                name: portfolio.name
+            }
+        }));
     } catch (err) {
         console.error(err);
         next(err);
@@ -90,7 +95,7 @@ router.get('/:portfolioId', async function(req, res, next) {
     try {
         const portfolio = await Portfolio.findById(req.params.portfolioId);
 
-        if (portfolio._doc.user.equals(req.user._id)) {
+        if (portfolio._doc.user.toString() !== req.user._id) {
             const error = new Error("Forbidden");
             error.status = 403;
             throw(error);
@@ -125,7 +130,8 @@ router.get('/:portfolioId/kospi-index', async function(req, res, next) {
 router.delete('/:portfolioId', async function(req, res, next) {
     try {
         const portfolio = await Portfolio.findById(req.params.portfolioId);
-        if (portfolio._doc.user.equals(req.user._id)) {
+        console.log(portfolio._doc.user, req.user._id);
+        if (portfolio._doc.user.toString() !== req.user._id) {
             const error = new Error("Forbidden");
             error.status = 403;
             throw(error);
