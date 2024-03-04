@@ -124,12 +124,8 @@ router.get('/:portfolioId/kospi-index', async function(req, res, next) {
 
 router.delete('/:portfolioId', async function(req, res, next) {
     try {
-        const portfolio = await Portfolio.findById(req.params.portfolioId);
-        if (portfolio._doc.user.equals(req.user._id)) {
-            const error = new Error("Forbidden");
-            error.status = 403;
-            throw(error);
-        }
+        console.log(req.user._id)
+
         await Portfolio.findByIdAndDelete(req.params.portfolioId);
         res.json({message: "success"});
     } catch (err) {
