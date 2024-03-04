@@ -27,14 +27,6 @@ async function getInvestResult(dto) {
     for (const stockItem of stockItems) {
         eachRates.push(await accumulateEachReturnRates(stockItem, startDate, endDate));
     }
-    // for (let i = 0; i < eachRates[0].length; i++) {
-    //     const rate1 = eachRates[0][i];
-    //     const rate2 = eachRates[1][i];
-    //     const rate3 = eachRates[2][i];
-    //     if (rate1.date.getDate() !== rate2.date.getDate() || rate2.date.getDate() !== rate3.date.getDate()) {
-    //         console.log(rate1.date + " " + rate2.date + " " + rate3.date);
-    //     }
-    // }
     totalReturnRates = accumulateTotalReturnRates(eachRates, weights, startDate, endDate);
     evaluationAmount = investAmounts * (1 + totalReturnRates[totalReturnRates.length - 1].rate);
     return {
